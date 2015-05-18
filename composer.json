@@ -4,5 +4,8 @@
         "behat/mink": "~1.6",
         "guzzlehttp/guzzle": "~5.2",
         "monolog/monolog": "~1.13"
+    },
+    "require-dev": {
+        "peekmo/jsonpath": "dev-master"
     }
 }
