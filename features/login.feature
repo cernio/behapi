@@ -20,7 +20,7 @@ Funzionalità: login
     E la risposta contiene JSONPath $.fullname
 
 
-
+  #alternativa
   Scenario: Login successful (http style)
     Dato che ho un body 
     """
