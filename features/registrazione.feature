@@ -1,5 +1,5 @@
 # language: it
-Funzionalità: login
+Funzionalità: registrazione utente
   Come utente della piattaforma
   Voglio autenticarmi
   Così che io possa salvare i documenti, essere riconoscibile...
