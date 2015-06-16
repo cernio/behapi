@@ -3,4 +3,5 @@ default:
         api:
            contexts:                
             - ApiContext:
-                - http://api.example.com
+                - http://api.maniinpasta.com
+                

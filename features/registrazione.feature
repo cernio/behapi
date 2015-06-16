@@ -21,7 +21,7 @@ Funzionalità: registrazione utente
     E la risposta contiene JSONPath $.fullname
 
 
-  Scenario: Login incorrect 
+  Schema dello Scenario: Login incorrect 
     Quando faccio POST su “/v1/login” con body “url-encoded”
     """
     <qstring_credenziali>
@@ -30,11 +30,11 @@ Funzionalità: registrazione utente
     E la risposta contiene JSONPath $.error
       Esempi:
       | qstring_credenziali |
-      | user=test&password=sbagliata |
-      | user=sbagliata&password=sbagliata |
-      | user=&password=|
-      | user=test&password=|
-      | user=&password=letmein|
+      | user=test&pass=sbagliata |
+      | user=sbagliata&pass=sbagliata |
+      | user=&pass=|
+      | user=test&pass=|
+      | user=&pass=letmein|
     
 
 

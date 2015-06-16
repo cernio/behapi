@@ -1,11 +1,11 @@
 {
+    
     "require": {
         "behat/behat": "~3.0",
         "behat/mink": "~1.6",
         "guzzlehttp/guzzle": "~5.3",
-        "monolog/monolog": "~1.13"
-    },
-    "require-dev": {
+        "monolog/monolog": "~1.13",
         "peekmo/jsonpath": "dev-master"
     }
+
 }

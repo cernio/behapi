@@ -17,6 +17,19 @@ Funzionalità: Notifica di following
 
     Quando "pippo" segue "pluto_direct"
 
+
     Allora "pluto_direct" riceve una mail di notifica diretta
     Ma "pluto_direct" non riceve una mail di notifica digest
 
+# $fc= new FeatureContext();
+# $fc->cheEsisteConNotificheDirette("pluto_direct");
+# $fc->cheEsisteConNotificheDigest("topolino_digest");
+# ...
+# 
+# $fc->nonSegue("pippo","pluto_direct");
+# $fc->utenteAttivo("pippo");
+# 
+# $fc->segue("pippo","pluto_direct");
+# 
+# $fc->riceveMailDiretta("pluto_direct");
+# $fc->riceveMailDigest("pluto_direct");

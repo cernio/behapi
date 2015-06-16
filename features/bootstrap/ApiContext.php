@@ -12,9 +12,11 @@ use Behat\Behat\Hook\Scope\AfterFeatureScope;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Behat\Hook\Scope\BeforeFeatureScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Gherkin\Node\PyStringNode;
 use Behat\Testwork\Hook\Scope\BeforeSuiteScope;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\TransferException;
+use Peekmo\JsonPath\JsonStore;
 
 /**
  * Description of ApiContext
@@ -103,6 +105,7 @@ class ApiContext implements Context, SnippetAcceptingContext {
 
     /**
      * @Then il body e JSON
+     * @Then il body è JSON
      */
     public function ilBodyEJson() {
         $body = $this->_response->json();
@@ -219,22 +222,19 @@ class ApiContext implements Context, SnippetAcceptingContext {
         print_r($res);
     }
 
-     /**
+    /**
      * @Then la risposta contiene JSONPath :arg1
      */
-    public function laRispostaContieneJsonpath($arg1)
-    {
-         $res = $this->_jsonStore->get($arg1);
-         if(empty($res)){
-             throw new \Exception("$arg1 non è valorizzato");
-         }
+    public function laRispostaContieneJsonpath($arg1) {
+        $res = $this->_jsonStore->get($arg1);
+        if (empty($res)) {
+            throw new \Exception("$arg1 non è valorizzato");
+        }
     }
 
-  
-    
     /**
      * @Then JSONPATH :arg1 contiene una property :arg2
-     
+
      */
     public function jsonpathContieneUnaProperty($arg1, $arg2) {
         $res = $this->_jsonStore->get($arg1);
@@ -293,7 +293,7 @@ class ApiContext implements Context, SnippetAcceptingContext {
     /**
      * @Given che ho un request body
      */
-    public function cheHoUnRequestBody(Behat\Gherkin\Node\PyStringNode $string) {
+    public function cheHoUnRequestBody(PyStringNode $string) {
         $this->_request['body'] = $string->getRaw();
     }
 
@@ -308,8 +308,39 @@ class ApiContext implements Context, SnippetAcceptingContext {
      * @When faccio POST su :arg1
      */
     public function faccioPostSu($arg1) {
-        $this->_client->createRequest('POST',$arg1, ['body'=>$this->_request['body'],
-            'headers'=>$this->_request['headers']]);
+        $this->_client->createRequest('POST', $arg1, ['body' => $this->_request['body'],
+            'headers' => $this->_request['headers']]);
+    }
+
+    /**
+     * @When faccio POST su :arg1 con body :arg2
+     */
+    public function faccioPostSuConBody($arg1, $arg2, PyStringNode $string) {
+        try {
+            if ($arg2 == 'url-encoded') {
+
+                $request = $this->_client->createRequest('POST', $arg1, ['body' => $string->getRaw()]);
+            } else if ($arg2 == 'json') {
+                $request = $this->_client->createRequest('POST', $arg1, ['json' => $string->getRaw()]);
+            }
+            $response = $this->_client->send($request);
+            $this->_response = $response;
+        } catch (TransferException $e) {
+            if ($e->hasResponse()) {
+                $this->_response = $e->getResponse();
+            } else {
+                throw $e;
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * @Given che esiste l’utente “test” con password “letmein”
+     */
+    public function cheEsisteLUtenteTestConPasswordLetmein() {
+        return true;
     }
 
 }
