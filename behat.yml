@@ -1,0 +1,6 @@
+default:
+    suites:
+        api:
+           contexts:                
+            - ApiContext:
+                - http://api.example.com

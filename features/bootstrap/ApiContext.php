@@ -15,13 +15,15 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Testwork\Hook\Scope\BeforeSuiteScope;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\TransferException;
+
 /**
  * Description of ApiContext
  *
  * @author cernio
  */
-class ApiContext implements Context, SnippetAcceptingContext{
-        public $_client;
+class ApiContext implements Context, SnippetAcceptingContext {
+
+    public $_client;
 
     /**
      *
@@ -32,6 +34,7 @@ class ApiContext implements Context, SnippetAcceptingContext{
     public $_response;
     public $_bodyDecoded;
     public $_jsonStore;
+    public $_request;
 
     /**
      * @BeforeSuite
@@ -88,7 +91,8 @@ class ApiContext implements Context, SnippetAcceptingContext{
     }
 
     /**
-     * @Then lo status code deve essere :arg1
+     * @Then lo status code deve essere :httpStatus
+     * @Then lo status code è :httpStatus
      */
     public function loStatusCodeDeveEssere($httpStatus) {
         if ((string) $this->_response->getStatusCode() !== $httpStatus) {
@@ -215,8 +219,22 @@ class ApiContext implements Context, SnippetAcceptingContext{
         print_r($res);
     }
 
+     /**
+     * @Then la risposta contiene JSONPath :arg1
+     */
+    public function laRispostaContieneJsonpath($arg1)
+    {
+         $res = $this->_jsonStore->get($arg1);
+         if(empty($res)){
+             throw new \Exception("$arg1 non è valorizzato");
+         }
+    }
+
+  
+    
     /**
      * @Then JSONPATH :arg1 contiene una property :arg2
+     
      */
     public function jsonpathContieneUnaProperty($arg1, $arg2) {
         $res = $this->_jsonStore->get($arg1);
@@ -228,15 +246,14 @@ class ApiContext implements Context, SnippetAcceptingContext{
             }
         }
     }
-    
-        /**
+
+    /**
      * @Then JSONPATH :arg1 contiene un dato di tipo :arg2
      * @Then la proprieta JSON :arg1 contiene un dato di tipo :arg2
      */
-    public function jsonpathContieneUnDatoDiTipo($arg1, $arg2)
-    {
+    public function jsonpathContieneUnDatoDiTipo($arg1, $arg2) {
         $res = $this->_jsonStore->get($arg1);
-        if(empty($res)){
+        if (empty($res)) {
             throw new \Exception("no items matching criteria ");
         }
 //        print_r($res);
@@ -245,34 +262,54 @@ class ApiContext implements Context, SnippetAcceptingContext{
             if (empty($resItem)) {
                 throw new \Exception("item not found ");
             }
-            switch($arg2){
+            switch ($arg2) {
                 case 'integer':
-                    if(!is_integer($resItem)){
+                    if (!is_integer($resItem)) {
                         throw new \Exception("not integer");
                     }
                     break;
-                case 'float': 
-                case 'double': 
-                    if(!is_double($resItem)){
+                case 'float':
+                case 'double':
+                    if (!is_double($resItem)) {
                         throw new \Exception("not double");
                     }
                     break;
                 case 'string':
-                    if(!is_string($resItem)){
+                    if (!is_string($resItem)) {
                         throw new \Exception("not string");
                     }
                     break;
                 case 'url':
-                    if(filter_var($resItem, FILTER_VALIDATE_URL) === FALSE){
-                        throw new \Exception("not a valid url: ". $resItem);
+                    if (filter_var($resItem, FILTER_VALIDATE_URL) === FALSE) {
+                        throw new \Exception("not a valid url: " . $resItem);
                     }
                     break;
                 default:
                     throw new \Exception("case not implemented");
-                    
             }
-            
         }
+    }
+
+    /**
+     * @Given che ho un request body
+     */
+    public function cheHoUnRequestBody(Behat\Gherkin\Node\PyStringNode $string) {
+        $this->_request['body'] = $string->getRaw();
+    }
+
+    /**
+     * @Given ho un header :arg1 :arg2
+     */
+    public function hoUnHeader($arg1, $arg2) {
+        $this->_request['headers'][$arg1][] = $arg2;
+    }
+
+    /**
+     * @When faccio POST su :arg1
+     */
+    public function faccioPostSu($arg1) {
+        $this->_client->createRequest('POST',$arg1, ['body'=>$this->_request['body'],
+            'headers'=>$this->_request['headers']]);
     }
 
 }
