@@ -3,13 +3,16 @@ Funzionalità: registrazione utente
   Come utente anonimo volgio registrami sulla piattaforma 
   per poter accedere ai servizi che offre
 
-  Contesto:
-   Dato che esiste l’utente “test” con password “letmein”
-   Dato che esiste l’utente inactive “test-inactrive” con password “letmein”
+Contesto:
+  Dato che esistono gli utenti: 
+    | username | password | email                  |status|
+    | test     | letmein   | test@knplabs.com      |active|
+    | inactive | letmein   | inactive@symfony.com  |inactive|
+    | disable  | letmein   | disavle@symfony.com   |disable|
    
 
   Scenario: Registration ok
-    Quando faccio POST su “/v1/registrazione” con body “url-encoded”
+    Quando faccio POST su "/v1/registrazione" con body "url-encoded"
     """
     user=newuser&password=prova1234&nome=pippo&cognome=pluto
     """
@@ -21,7 +24,7 @@ Funzionalità: registrazione utente
     E la risposta contiene JSONPath $.fullname
 
 
-  Schema dello Scenario: Login incorrect 
+  Schema dello Scenario: Utente  
     Quando faccio POST su “/v1/login” con body “url-encoded”
     """
     <qstring_credenziali>

@@ -8,7 +8,7 @@ Funzionalità: login
 Contesto:
   Dato che esistono gli utenti: 
     | username | password | email                  |status|
-    | test     | letmein   | test@knplabs.com   |active|
+    | test     | letmein   | test@knplabs.com      |active|
     | inactive | letmein   | inactive@symfony.com  |inactive|
     | disable  | letmein   | disavle@symfony.com   |disable|
 
@@ -19,7 +19,7 @@ Contesto:
     Quando faccio POST su "/v1/login" con body "url-encoded"
     """
     user=test&password=letmein
-    """    
+    """
    Allora lo status code è "200"
     
     E la risposta contiene JSONPath "$.username"
@@ -45,18 +45,18 @@ Contesto:
       | user=&pass=letmein|
     
   # Schema dello scenario: o Scenario outline: si usa quando lo scenario prende degli esempi per l'esecuzione
-#   Schema dello scenario: User not active
-#     Quando faccio POST su "/v1/login" con body "url-encoded"
-#     """
-#     <qstring_credenziali>
-#     """
-#     Allora lo status code è "403"
-#     E il body è JSON
-#     E la risposta contiene JSONPath "$.error"
-#       Esempi:
-#       | qstring_credenziali |
-#       | user=inactive&pass=letmin |
-#       | user=disable&pass=letmin |
+  Schema dello scenario: User not active
+    Quando faccio POST su "/v1/login" con body "url-encoded"
+    """
+    <qstring_credenziali>
+    """
+    Allora lo status code è "403"
+    E il body è JSON
+    E la risposta contiene JSONPath "$.error"
+      Esempi:
+      | qstring_credenziali |
+      | user=inactive&pass=letmin |
+      | user=disable&pass=letmin |
     
 
 
