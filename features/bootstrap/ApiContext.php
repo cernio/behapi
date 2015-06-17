@@ -320,7 +320,9 @@ class ApiContext implements Context, SnippetAcceptingContext {
         try {
             if ($arg2 == 'url-encoded') {
 
-                $request = $this->_client->createRequest('POST', $arg1, ['body' => $string->getRaw()]);
+              
+                $request = $this->_client->createRequest('POST', $arg1,['headers'=>['Content-Type'=>'application/x-www-form-urlencoded'],'body'=>$string->getRaw()]);
+//                $request->setBody( $streamBody);
             } else if ($arg2 == 'json') {
                 $request = $this->_client->createRequest('POST', $arg1, ['json' => $string->getRaw()]);
             }
