@@ -1,17 +1,17 @@
 # language: it
 Funzionalità: registrazione utente
-  Come utente della piattaforma
-  Voglio autenticarmi
-  Così che io possa salvare i documenti, essere riconoscibile...
+  Come utente anonimo volgio registrami sulla piattaforma 
+  per poter accedere ai servizi che offre
 
   Contesto:
    Dato che esiste l’utente “test” con password “letmein”
+   Dato che esiste l’utente inactive “test-inactrive” con password “letmein”
    
 
-  Scenario: Login successful
-    Quando faccio POST su “/v1/login” con body “url-encoded”
+  Scenario: Registration ok
+    Quando faccio POST su “/v1/registrazione” con body “url-encoded”
     """
-    user=test&password=letmein
+    user=newuser&password=prova1234&nome=pippo&cognome=pluto
     """
     
     Allora lo status code è “200”

@@ -13,6 +13,7 @@ use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Behat\Hook\Scope\BeforeFeatureScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\PyStringNode;
+use Behat\Gherkin\Node\TableNode;
 use Behat\Testwork\Hook\Scope\BeforeSuiteScope;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\TransferException;
@@ -338,9 +339,33 @@ class ApiContext implements Context, SnippetAcceptingContext {
 
     /**
      * @Given che esiste l’utente “test” con password “letmein”
+     * @Given che esiste l’utente inactive “test” con password “letmein”
+     * @Given che esiste l’utente disable “test” con password “letmein”
      */
     public function cheEsisteLUtenteTestConPasswordLetmein() {
+        //qui si puo scegliere che strada seguire:
+        //inserire l'utente
+        //prendere l'utente dal db
+        //chiamare una url esterna        
         return true;
     }
+    
+    
+    /**
+     * @Given che esistono gli utenti:
+     */
+    public function cheEsistonoGliUtenti(TableNode $table)
+    {
+        foreach ($table as $t){
+            //qui si puo scegliere che strada seguire:
+            //inserire l'utente
+            //prendere l'utente dal db
+            //chiamare una url esterna        
+            //var_dump($t);
+        }
+        return true;
+    }
+
+    
 
 }

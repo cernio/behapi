@@ -4,18 +4,25 @@ Funzionalità: login
   Voglio autenticarmi
   Così che io possa salvare i documenti, essere riconoscibile...
 
-  Contesto:
-   Dato che esiste l’utente “test” con password “letmein”
-   
 
-#   Scenario: Login successful
-#     Quando faccio POST su “/v1/login” con body “url-encoded”
-#     """
-#     user=test&password=letmein
-#     """
-#     
-#     Allora lo status code è “200”
-#     E il body è JSON
+Contesto:
+  Dato che esistono gli utenti: 
+    | username | password | email                  |status|
+    | test     | letmein   | test@knplabs.com   |active|
+    | inactive | letmein   | inactive@symfony.com  |inactive|
+    | disable  | letmein   | disavle@symfony.com   |disable|
+
+
+
+
+  Scenario: Login successful
+    Quando faccio POST su "/v1/login" con body "url-encoded"
+    """
+    user=test&password=letmein
+    """    
+   Allora lo status code è "200"
+    
+    E la risposta contiene JSONPath "$.username"
 #     E la risposta contiene JSONPath $.username
 #     E la risposta contiene JSONPath $.userid
 #     E la risposta contiene JSONPath $.fullname
@@ -36,6 +43,20 @@ Funzionalità: login
       | user=&pass=|
       | user=test&pass=|
       | user=&pass=letmein|
+    
+  # Schema dello scenario: o Scenario outline: si usa quando lo scenario prende degli esempi per l'esecuzione
+#   Schema dello scenario: User not active
+#     Quando faccio POST su "/v1/login" con body "url-encoded"
+#     """
+#     <qstring_credenziali>
+#     """
+#     Allora lo status code è "403"
+#     E il body è JSON
+#     E la risposta contiene JSONPath "$.error"
+#       Esempi:
+#       | qstring_credenziali |
+#       | user=inactive&pass=letmin |
+#       | user=disable&pass=letmin |
     
 
 
