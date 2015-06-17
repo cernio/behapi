@@ -44,18 +44,18 @@ Contesto:
       | user=&password=letmein|
     
   # Schema dello scenario: o Scenario outline: si usa quando lo scenario prende degli esempi per l'esecuzione
-  Schema dello scenario: User not found
+  Schema dello scenario: User inactive
     Quando faccio POST su "/v1/login" con body "url-encoded"
     """
     <qstring_credenziali>
     """
-    Allora lo status code è "404"
+    Allora lo status code è "403"
     E il body è JSON
     E la risposta contiene JSONPath "$.error"
       Esempi:
       | qstring_credenziali |
-      | user=inactive&password=letmin |
-      | user=disable&password=letmin |
+      | user=inactive&password=letmein |
+      | user=disable&password=letmein |
 
   Schema dello scenario: Forbidden
     Quando faccio POST su "/v1/login" con body "url-encoded"
