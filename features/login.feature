@@ -20,15 +20,16 @@ Contesto:
     """
     user=test&password=letmein
     """
-   Allora lo status code è "200"
     
+    Allora lo status code è "200"
+    E il body è JSON
     E la risposta contiene JSONPath "$.username"
 #     E la risposta contiene JSONPath $.username
 #     E la risposta contiene JSONPath $.userid
 #     E la risposta contiene JSONPath $.fullname
 
   # Schema dello scenario: o Scenario outline: si usa quando lo scenario prende degli esempi per l'esecuzione
-  Schema dello scenario: Login incorrect 
+  Schema dello scenario: Bad login  
     Quando faccio POST su "/v1/login" con body "url-encoded"
     """
     <qstring_credenziali>
@@ -38,14 +39,25 @@ Contesto:
     E la risposta contiene JSONPath "$.error"
       Esempi:
       | qstring_credenziali |
-      | user=test&pass=sbagliata |
-      | user=sbagliata&pass=sbagliata |
-      | user=&pass=|
-      | user=test&pass=|
-      | user=&pass=letmein|
+      | user=&password=|
+      | user=test&password=|
+      | user=&password=letmein|
     
   # Schema dello scenario: o Scenario outline: si usa quando lo scenario prende degli esempi per l'esecuzione
-  Schema dello scenario: User not active
+  Schema dello scenario: User not found
+    Quando faccio POST su "/v1/login" con body "url-encoded"
+    """
+    <qstring_credenziali>
+    """
+    Allora lo status code è "404"
+    E il body è JSON
+    E la risposta contiene JSONPath "$.error"
+      Esempi:
+      | qstring_credenziali |
+      | user=inactive&password=letmin |
+      | user=disable&password=letmin |
+
+  Schema dello scenario: Forbidden
     Quando faccio POST su "/v1/login" con body "url-encoded"
     """
     <qstring_credenziali>
@@ -55,9 +67,9 @@ Contesto:
     E la risposta contiene JSONPath "$.error"
       Esempi:
       | qstring_credenziali |
-      | user=inactive&pass=letmin |
-      | user=disable&pass=letmin |
-    
+      | user=test&password=sbagliata |
+      | user=cippalippa&password=sbagliata |
+        
 
 
 #   #alternativa con header esplicto nella request 
