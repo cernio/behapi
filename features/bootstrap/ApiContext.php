@@ -207,21 +207,7 @@ class ApiContext implements Context, SnippetAcceptingContext {
 //        
 //        
 //    }
-    /**
-     * @Then JSONPATH :jsonpath è uguale a :valore
-     */
-    public function jsonpathEUgualeA($jsonpath, $valore) {
 
-        $res = $this->_jsonStore->get($this->_bodyDecoded, $jsonpath);
-        //todo estendi per valori multipli
-//        if(is_array($valore)){ 
-//            foreach($valore as $val){
-//                
-//            }
-//        }
-        print "jsonpath res:\n";
-        print_r($res);
-    }
 
     /**
      * @Then la risposta contiene JSONPath :arg1
@@ -236,6 +222,7 @@ class ApiContext implements Context, SnippetAcceptingContext {
     /**
      * @Then JSONPATH :arg1 contiene una property :arg2
 
+
      */
     public function jsonpathContieneUnaProperty($arg1, $arg2) {
         $res = $this->_jsonStore->get($arg1);
@@ -246,6 +233,22 @@ class ApiContext implements Context, SnippetAcceptingContext {
                 throw new \Exception("item $arg2 not found ");
             }
         }
+    }
+    
+        /**
+     * @Then JSONPATH :arg1 è uguale a :arg2
+
+     */
+    public function jsonpathUgualeA($arg1, $arg2) {
+        $res = $this->_jsonStore->get($arg1);
+        $found=false;
+        foreach ($res as $resItem) {
+//            print_r($resItem[$arg2]);
+            if ($resItem==$arg2) {
+                return true;
+            }
+        }
+        throw new \Exception("value $arg2 not found in matching $arg1");
     }
 
     /**
