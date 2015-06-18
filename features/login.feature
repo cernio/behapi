@@ -7,28 +7,32 @@ Funzionalità: login
 
 Contesto:
   Dato che esistono gli utenti: 
-    | username | password | email                  |status|
-    | test     | letmein   | test@knplabs.com      |active|
-    | inactive | letmein   | inactive@symfony.com  |inactive|
-    | disable  | letmein   | disavle@symfony.com   |disable|
+    | username | password  | nome | cognome | email                  | status | token | token_expire_delta_sec |
+    | test     | letmein   | utente test | attivo | test@knplabs.com       | active | 1234             | -10 | 
+    | inactive | letmein   | questo utente | inattivo | inactive@symfony.com   | inactive | 4566           | 60 |
+    | tokenexpired | letmein   | questo qua | token vecchio | expired@symfony.com   | inactive | 4566           | -5 |
+    | disable  | letmein   | ciccio | disabilitato | disable@symfony.com    | disable |  10110          | 0  |
 
 
 
-
+  @users
   Scenario: Login successful
+#     Dato che esistono gli utenti:
+#     | username | password  | nome | cognome | email                  | status | token | token_expire_delta_sec |
+#     | test     | letmein   | utente test | attivo | test@knplabs.com       | active | 1234             | -10 | 
     Quando faccio POST su "/v1/login" con body "url-encoded"
     """
-    user=test&password=letmein
+    username=test&password=letmein
     """
     
     Allora lo status code è "200"
     E il body è JSON
+    E mostra il body
     E la risposta contiene JSONPath "$.username"
-#     E la risposta contiene JSONPath $.username
-#     E la risposta contiene JSONPath $.userid
-#     E la risposta contiene JSONPath $.fullname
+
 
   # Schema dello scenario: o Scenario outline: si usa quando lo scenario prende degli esempi per l'esecuzione
+  @users
   Schema dello scenario: Bad login  
     Quando faccio POST su "/v1/login" con body "url-encoded"
     """
@@ -39,11 +43,12 @@ Contesto:
     E la risposta contiene JSONPath "$.error"
       Esempi:
       | qstring_credenziali |
-      | user=&password=|
-      | user=test&password=|
-      | user=&password=letmein|
+      | username=&password=|
+      | username=test&password=|
+      | username=&password=letmein|
     
   # Schema dello scenario: o Scenario outline: si usa quando lo scenario prende degli esempi per l'esecuzione
+  @users
   Schema dello scenario: User inactive
     Quando faccio POST su "/v1/login" con body "url-encoded"
     """
@@ -54,9 +59,10 @@ Contesto:
     E la risposta contiene JSONPath "$.error"
       Esempi:
       | qstring_credenziali |
-      | user=inactive&password=letmein |
-      | user=disable&password=letmein |
+      | username=inactive&password=letmein |
+      | username=disable&password=letmein |
 
+  @users
   Schema dello scenario: Forbidden
     Quando faccio POST su "/v1/login" con body "url-encoded"
     """
@@ -67,8 +73,8 @@ Contesto:
     E la risposta contiene JSONPath "$.error"
       Esempi:
       | qstring_credenziali |
-      | user=test&password=sbagliata |
-      | user=cippalippa&password=sbagliata |
+      | username=test&password=sbagliata |
+      | username=cippalippa&password=sbagliata |
         
 
 
@@ -76,7 +82,7 @@ Contesto:
 #   Scenario: Login successful (http style)
 #     Dato che ho un request body 
 #     """
-#     user=test&password=letmein
+#     username=test&password=letmein
 #     """
 #     E ho un header "Content-Type" "application/x-www-form-urlencoded"
 #     

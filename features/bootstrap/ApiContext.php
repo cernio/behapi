@@ -58,7 +58,7 @@ class ApiContext implements Context, SnippetAcceptingContext {
     /**
      *
      * @AfterFeature
-     * @param \JYL\Bundle\JYLApiBundle\Features\Context\AfterFeature $scope
+     * @param AfterFeature $scope
      */
     public static function closeFeature(AfterFeatureScope $scope) {
         //da eseguire alla fine di un file .feature
@@ -70,6 +70,13 @@ class ApiContext implements Context, SnippetAcceptingContext {
     public function prepareDB(BeforeScenarioScope $scope) {
         // clean database after scenarios,
         // tagged with @database
+    }
+
+    /**
+     * @BeforeScenario @users
+     */
+    public function deleteUsers(BeforeScenarioScope $scope) {
+        $this->_client->delete('/test/user?q=all');
     }
 
     /**
@@ -91,6 +98,24 @@ class ApiContext implements Context, SnippetAcceptingContext {
 
 //        $baseUrl=$params['baseUrl'];
         $this->_client = new Client(['base_url' => $baseUrl]);
+    }
+
+    /**
+     * @Given che esistono gli utenti:
+     */
+    public function cheEsistonoGliUtenti(TableNode $table) {
+        foreach ($table as $t) {
+            try {
+//                print_r($t);
+                $response = $this->_client->post('/test/user', array('body' => $t));
+            } catch (TransferException $e) {
+                if ($e->hasResponse()) {
+                    print $e->getResponse();
+                }
+//                print $e->getMessage();
+            }
+        }
+        return true;
     }
 
     /**
@@ -208,7 +233,6 @@ class ApiContext implements Context, SnippetAcceptingContext {
 //        
 //    }
 
-
     /**
      * @Then la risposta contiene JSONPath :arg1
      */
@@ -234,17 +258,17 @@ class ApiContext implements Context, SnippetAcceptingContext {
             }
         }
     }
-    
-        /**
+
+    /**
      * @Then JSONPATH :arg1 è uguale a :arg2
 
      */
     public function jsonpathUgualeA($arg1, $arg2) {
         $res = $this->_jsonStore->get($arg1);
-        $found=false;
+        $found = false;
         foreach ($res as $resItem) {
 //            print_r($resItem[$arg2]);
-            if ($resItem==$arg2) {
+            if ($resItem == $arg2) {
                 return true;
             }
         }
@@ -323,8 +347,8 @@ class ApiContext implements Context, SnippetAcceptingContext {
         try {
             if ($arg2 == 'url-encoded') {
 
-              
-                $request = $this->_client->createRequest('POST', $arg1,['headers'=>['Content-Type'=>'application/x-www-form-urlencoded'],'body'=>$string->getRaw()]);
+
+                $request = $this->_client->createRequest('POST', $arg1, ['headers' => ['Content-Type' => 'application/x-www-form-urlencoded'], 'body' => $string->getRaw()]);
 //                $request->setBody( $streamBody);
             } else if ($arg2 == 'json') {
                 $request = $this->_client->createRequest('POST', $arg1, ['json' => $string->getRaw()]);
@@ -354,23 +378,43 @@ class ApiContext implements Context, SnippetAcceptingContext {
         //chiamare una url esterna        
         return true;
     }
-    
-    
+
     /**
-     * @Given che esistono gli utenti:
+     * @Then mostra il body
      */
-    public function cheEsistonoGliUtenti(TableNode $table)
-    {
-        foreach ($table as $t){
-            //qui si puo scegliere che strada seguire:
-            //inserire l'utente
-            //prendere l'utente dal db
-            //chiamare una url esterna        
-            //var_dump($t);
-        }
-        return true;
+    public function mostraIlBody() {
+        print_r($this->_bodyDecoded);
     }
 
-    
+    /**
+     * @When faccio PUT su :arg1 con codice di attivazione di :user
+     */
+    public function faccioPutSuConCodiceDiAttivazioneDi($arg1, $user) {
+        
+        //recupero il token dall'interfaccia di test
+        try {
+
+            $response = $this->_client->get("/test/user/$user/token");
+            $userToken = $response->json();
+        } catch (TransferException $e) {
+            if ($e->hasResponse()) {
+                print "Error on fetching token...";
+                print $e->getResponse();
+                throw $e;
+            }
+//                print $e->getMessage();
+        }
+        // proviamo l'activate
+        try {
+            $response=$this->_client->put("/v1/activate/$user", array('query' => array('token' => $userToken['token'])));
+        } catch (TransferException $e) {
+            if ($e->hasResponse()) {
+                $this->_response = $e->getResponse();
+            } else {
+                throw $e;
+            }
+        }
+        $this->_response=$response;
+    }
 
 }
