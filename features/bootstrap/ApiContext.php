@@ -396,6 +396,7 @@ class ApiContext implements Context, SnippetAcceptingContext {
 
             $response = $this->_client->get("/test/user/$user/token");
             $userToken = $response->json();
+            
         } catch (TransferException $e) {
             if ($e->hasResponse()) {
                 print "Error on fetching token...";
@@ -407,6 +408,8 @@ class ApiContext implements Context, SnippetAcceptingContext {
         // proviamo l'activate
         try {
             $response=$this->_client->put("/v1/activate/$user", array('query' => array('token' => $userToken['token'])));
+            $this->_response=$response;
+            
         } catch (TransferException $e) {
             if ($e->hasResponse()) {
                 $this->_response = $e->getResponse();
@@ -414,7 +417,6 @@ class ApiContext implements Context, SnippetAcceptingContext {
                 throw $e;
             }
         }
-        $this->_response=$response;
     }
 
 }

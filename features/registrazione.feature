@@ -33,6 +33,7 @@ Contesto:
     
     Allora lo status code è "200"
     E il body è JSON
+    E mostra il body
     E la risposta contiene JSONPath "$.status"
     E JSONPath "$.status" è uguale a "active"
 
@@ -51,7 +52,7 @@ Contesto:
        
     Quando faccio PUT su "/v1/activate/test" con codice di attivazione di "test"
     
-    Allora lo status code è "403"
+    Allora lo status code è "422"
     E il body è JSON
     E la risposta contiene JSONPath "$.error"    
 
